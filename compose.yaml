@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    working_dir: /usr/src/frontend
+    volumes:
+      - ./frontend:/usr/src/frontend
+      - node_modules:/usr/src/frontend/node_modules
+    ports:
+      - 5173:5173
+
+  backend:
+    build: ./backend
+    working_dir: /usr/src/backend
+    volumes:
+      - ./backend:/usr/src/backend
+      - ./backend/data:/usr/src/backend/
+      - /usr/src/backend/node_modules
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+
+  database:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jkpgcity
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - database-data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    ports:
+      - '8080:8080'
+
+volumes:
+  database-data:
+  node_modules:
